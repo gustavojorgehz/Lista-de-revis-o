@@ -1,0 +1,68 @@
+CREATE TABLE autores (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    nacionalidade VARCHAR(50)
+);
+
+CREATE TABLE livros (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    ano_publicacao INTEGER,
+    disponivel BOOLEAN DEFAULT TRUE,
+    autor_id INTEGER REFERENCES autores(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefone VARCHAR(20)
+);
+
+CREATE TABLE emprestimos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    livro_id INTEGER REFERENCES livros(id) ON DELETE RESTRICT,
+    data_emprestimo DATE NOT NULL,
+    data_devolucao DATE
+);
+
+INSERT INTO autores (nome, nacionalidade) VALUES 
+('Machado de Assis', 'Brasileira'),
+('Jorge Amado', 'Brasileira'),
+('Franz Kafka', 'Austro-húngara');
+
+INSERT INTO livros (titulo, ano_publicacao, disponivel, autor_id) VALUES 
+('Dom Casmurro', 1899, TRUE, 1),
+('Memórias Póstumas de Brás Cubas', 1881, TRUE, 1),
+('Tenda dos Milagres', 1969, FALSE, 2),
+('Capitães da Areia', 1937, TRUE, 2),
+('A Metamorfose', 1915, FALSE, 3);
+
+INSERT INTO usuarios (nome, email, telefone) VALUES 
+('Ana Rosa', 'ana@email.com', '47999991111'),
+('Carlos Costa', 'carlos@email.com', '47999992222'),
+('Maria Paz', 'maria@email.com', '47999993333');
+
+INSERT INTO emprestimos (usuario_id, livro_id, data_emprestimo, data_devolucao) VALUES 
+(1, 3, '2026-06-01', NULL),
+(2, 5, '2026-06-05', NULL), 
+(1, 1, '2026-05-10', '2026-05-20');
+
+
+SELECT * FROM livros;
+
+SELECT l.titulo, a.nome AS autor 
+FROM livros l 
+JOIN autores a ON l.autor_id = a.id;
+
+SELECT l.titulo 
+FROM livros l 
+JOIN autores a ON l.autor_id = a.id 
+WHERE a.nome = 'Jorge Amado';
+
+SELECT * FROM livros 
+ORDER BY titulo ASC;
+
+SELECT * FROM livros 
+WHERE disponivel = TRUE;
